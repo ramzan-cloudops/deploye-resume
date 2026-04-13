@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Command Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1e293b;
+    --green: #00ff88;
+    --blue: #38bdf8;
+    --yellow: #fbbf24;
+    --purple: #a78bfa;
+    --red: #f87171;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+    background-image:
+      radial-gradient(ellipse at 10% 0%, #00ff8810 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 100%, #38bdf810 0%, transparent 50%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease;
+  }
+
+  header h1 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px var(--green);
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Tab Bar */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .tab.active { color: var(--bg); font-weight: 700; }
+  .tab.linux.active  { background: var(--green);  border-color: var(--green);  box-shadow: 0 0 12px var(--green); }
+  .tab.git.active    { background: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+  .tab.github.active { background: var(--blue);   border-color: var(--blue);   box-shadow: 0 0 12px var(--blue); }
+
+  /* Search */
+  .search-wrap {
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--green); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* Section */
+  .section { display: none; animation: fadeUp 0.4s ease; }
+  .section.active { display: block; }
+
+  .section-heading {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin: 18px 0 8px 4px;
+  }
+
+  /* Command Card */
+  .cmd-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .cmd-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .cmd-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .cmd-card.c-green::before  { background: var(--green); }
+  .cmd-card.c-blue::before   { background: var(--blue); }
+  .cmd-card.c-yellow::before { background: var(--yellow); }
+  .cmd-card.c-purple::before { background: var(--purple); }
+  .cmd-card.c-red::before    { background: var(--red); }
+
+  .cmd-card:active { transform: scale(0.99); }
+
+  .cmd-left { flex: 1; min-width: 0; }
+
+  .cmd-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.88rem;
+    color: var(--green);
+    word-break: break-all;
+  }
+
+  .cmd-card.c-blue   .cmd-name { color: var(--blue); }
+  .cmd-card.c-yellow .cmd-name { color: var(--yellow); }
+  .cmd-card.c-purple .cmd-name { color: var(--purple); }
+  .cmd-card.c-red    .cmd-name { color: var(--red); }
+
+  .cmd-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .copy-btn {
+    flex-shrink: 0;
+    background: var(--border);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 2px;
+  }
+
+  .copy-btn:active { background: var(--green); color: var(--bg); }
+
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    padding: 40px 0;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ DEVOPS COMMANDS</h1>
+  <p>// Linux • Git • GitHub — Quick Reference</p>
+</header>
+
+<div class="tabs">
+  <div class="tab linux active" onclick="switchTab('linux')">🐧 LINUX</div>
+  <div class="tab git"   onclick="switchTab('git')">🌿 GIT</div>
+  <div class="tab github" onclick="switchTab('github')">🐙 GITHUB</div>
+</div>
+
+<div class="search-wrap">
+  <input type="text" id="searchBox" placeholder="// command dhundo..." oninput="filterCmds()">
+</div>
+
+<!-- LINUX SECTION -->
+<div class="section active" id="sec-linux">
+
+  <div class="section-heading">// Navigation</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">pwd</div><div class="cmd-desc">Current folder ka path dikhao</div></div><button class="copy-btn" onclick="cp(this,'pwd')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">ls</div><div class="cmd-desc">Folder ke andar ki files dikhao</div></div><button class="copy-btn" onclick="cp(this,'ls')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">ls -la</div><div class="cmd-desc">Sari files detail ke saath dikhao (hidden bhi)</div></div><button class="copy-btn" onclick="cp(this,'ls -la')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">cd foldername</div><div class="cmd-desc">Us folder mein jao</div></div><button class="copy-btn" onclick="cp(this,'cd foldername')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">cd ..</div><div class="cmd-desc">Ek folder peeche jao</div></div><button class="copy-btn" onclick="cp(this,'cd ..')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">cd ~</div><div class="cmd-desc">Home folder mein jao</div></div><button class="copy-btn" onclick="cp(this,'cd ~')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Files & Folders</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">mkdir foldername</div><div class="cmd-desc">Naya folder banao</div></div><button class="copy-btn" onclick="cp(this,'mkdir foldername')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">touch file.txt</div><div class="cmd-desc">Nayi khali file banao</div></div><button class="copy-btn" onclick="cp(this,'touch file.txt')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">cp file.txt copy.txt</div><div class="cmd-desc">File copy karo</div></div><button class="copy-btn" onclick="cp(this,'cp file.txt copy.txt')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">mv file.txt /path/</div><div class="cmd-desc">File move ya rename karo</div></div><button class="copy-btn" onclick="cp(this,'mv file.txt /path/')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">rm file.txt</div><div class="cmd-desc">File delete karo</div></div><button class="copy-btn" onclick="cp(this,'rm file.txt')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">rm -rf foldername</div><div class="cmd-desc">Folder aur sab kuch andar se delete karo</div></div><button class="copy-btn" onclick="cp(this,'rm -rf foldername')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// File Content</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">cat file.txt</div><div class="cmd-desc">File ka content terminal mein dikhao</div></div><button class="copy-btn" onclick="cp(this,'cat file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">less file.txt</div><div class="cmd-desc">File scroll karke padhne ke liye kholo</div></div><button class="copy-btn" onclick="cp(this,'less file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">head -10 file.txt</div><div class="cmd-desc">File ki pehli 10 lines dikhao</div></div><button class="copy-btn" onclick="cp(this,'head -10 file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">tail -10 file.txt</div><div class="cmd-desc">File ki aakhri 10 lines dikhao</div></div><button class="copy-btn" onclick="cp(this,'tail -10 file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">echo "text" > file.txt</div><div class="cmd-desc">Text file mein likho (overwrite)</div></div><button class="copy-btn" onclick="cp(this,'echo \"text\" > file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">echo "text" >> file.txt</div><div class="cmd-desc">Text file ke aakhir mein add karo</div></div><button class="copy-btn" onclick="cp(this,'echo \"text\" >> file.txt')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">grep "word" file.txt</div><div class="cmd-desc">File mein koi word dhundo</div></div><button class="copy-btn" onclick="cp(this,'grep \"word\" file.txt')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// System Info</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">whoami</div><div class="cmd-desc">Abhi kon sa user logged in hai</div></div><button class="copy-btn" onclick="cp(this,'whoami')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">uname -a</div><div class="cmd-desc">System aur OS ki info dikhao</div></div><button class="copy-btn" onclick="cp(this,'uname -a')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">df -h</div><div class="cmd-desc">Disk space kitna hai dikhao</div></div><button class="copy-btn" onclick="cp(this,'df -h')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">free -h</div><div class="cmd-desc">RAM kitni use ho rahi hai dikhao</div></div><button class="copy-btn" onclick="cp(this,'free -h')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">top</div><div class="cmd-desc">Live CPU aur RAM usage monitor karo</div></div><button class="copy-btn" onclick="cp(this,'top')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">ps aux</div><div class="cmd-desc">Sare running processes dikhao</div></div><button class="copy-btn" onclick="cp(this,'ps aux')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">kill -9 PID</div><div class="cmd-desc">Kisi process ko force stop karo</div></div><button class="copy-btn" onclick="cp(this,'kill -9 PID')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Permissions</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">chmod +x script.sh</div><div class="cmd-desc">Script ko run karne ki permission do</div></div><button class="copy-btn" onclick="cp(this,'chmod +x script.sh')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">chmod 755 file</div><div class="cmd-desc">Owner ko sab, baaki ko read/run permission</div></div><button class="copy-btn" onclick="cp(this,'chmod 755 file')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">sudo command</div><div class="cmd-desc">Admin (root) ki tarah command chalao</div></div><button class="copy-btn" onclick="cp(this,'sudo command')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">chown user file</div><div class="cmd-desc">File ka owner badlo</div></div><button class="copy-btn" onclick="cp(this,'chown user file')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Networking</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">ping google.com</div><div class="cmd-desc">Internet connection check karo</div></div><button class="copy-btn" onclick="cp(this,'ping google.com')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">curl url</div><div class="cmd-desc">URL se data download karo ya test karo</div></div><button class="copy-btn" onclick="cp(this,'curl url')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">ifconfig</div><div class="cmd-desc">Network interfaces aur IP address dikhao</div></div><button class="copy-btn" onclick="cp(this,'ifconfig')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">ssh user@ip</div><div class="cmd-desc">Remote server se connect ho jao</div></div><button class="copy-btn" onclick="cp(this,'ssh user@ip')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Shell Scripting</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">#!/bin/bash</div><div class="cmd-desc">Script ki pehli line — bash script hai yeh batao</div></div><button class="copy-btn" onclick="cp(this,'#!/bin/bash')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">./script.sh</div><div class="cmd-desc">Script run karo current folder se</div></div><button class="copy-btn" onclick="cp(this,'./script.sh')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">bash script.sh</div><div class="cmd-desc">Script directly bash se run karo</div></div><button class="copy-btn" onclick="cp(this,'bash script.sh')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">$1 $2 $3</div><div class="cmd-desc">Script ko diye gaye arguments read karo</div></div><button class="copy-btn" onclick="cp(this,'$1 $2 $3')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">$? </div><div class="cmd-desc">Aakhri command ka exit code — 0 matlab success</div></div><button class="copy-btn" onclick="cp(this,'$?')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">crontab -e</div><div class="cmd-desc">Scheduled tasks edit karo (cron jobs)</div></div><button class="copy-btn" onclick="cp(this,'crontab -e')">copy</button></div>
+  </div>
+
+</div>
+
+<!-- GIT SECTION -->
+<div class="section" id="sec-git">
+
+  <div class="section-heading">// Setup</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">git config --global user.name "Name"</div><div class="cmd-desc">Apna naam Git mein set karo</div></div><button class="copy-btn" onclick="cp(this,'git config --global user.name \"Name\"')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">git config --global user.email "e@mail.com"</div><div class="cmd-desc">Apni email Git mein set karo</div></div><button class="copy-btn" onclick="cp(this,'git config --global user.email \"e@mail.com\"')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">git config --list</div><div class="cmd-desc">Sari Git settings dikhao</div></div><button class="copy-btn" onclick="cp(this,'git config --list')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Repository</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git init</div><div class="cmd-desc">Current folder ko Git repo banao</div></div><button class="copy-btn" onclick="cp(this,'git init')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git clone URL</div><div class="cmd-desc">GitHub se project download karo</div></div><button class="copy-btn" onclick="cp(this,'git clone URL')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git status</div><div class="cmd-desc">Kya kya changes hain abhi dikhao</div></div><button class="copy-btn" onclick="cp(this,'git status')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git log --oneline</div><div class="cmd-desc">Commit history short mein dikhao</div></div><button class="copy-btn" onclick="cp(this,'git log --oneline')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Save Changes</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git add file.txt</div><div class="cmd-desc">Ek file ko commit ke liye tayyar karo</div></div><button class="copy-btn" onclick="cp(this,'git add file.txt')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git add .</div><div class="cmd-desc">Sari changed files ko tayyar karo</div></div><button class="copy-btn" onclick="cp(this,'git add .')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git commit -m "message"</div><div class="cmd-desc">Changes save karo message ke saath</div></div><button class="copy-btn" onclick="cp(this,'git commit -m \"message\"')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git commit -am "message"</div><div class="cmd-desc">Add aur commit ek saath karo</div></div><button class="copy-btn" onclick="cp(this,'git commit -am \"message\"')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Branches</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git branch</div><div class="cmd-desc">Saari branches dikhao</div></div><button class="copy-btn" onclick="cp(this,'git branch')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git branch branchname</div><div class="cmd-desc">Nayi branch banao</div></div><button class="copy-btn" onclick="cp(this,'git branch branchname')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git checkout branchname</div><div class="cmd-desc">Doosri branch pe chale jao</div></div><button class="copy-btn" onclick="cp(this,'git checkout branchname')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git checkout -b branchname</div><div class="cmd-desc">Nayi branch banao aur uspe chale jao</div></div><button class="copy-btn" onclick="cp(this,'git checkout -b branchname')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git merge branchname</div><div class="cmd-desc">Doosri branch ko current mein merge karo</div></div><button class="copy-btn" onclick="cp(this,'git merge branchname')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git branch -d branchname</div><div class="cmd-desc">Branch delete karo</div></div><button class="copy-btn" onclick="cp(this,'git branch -d branchname')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Undo</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">git restore file.txt</div><div class="cmd-desc">File ki changes wapas karo (commit se pehle)</div></div><button class="copy-btn" onclick="cp(this,'git restore file.txt')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">git reset HEAD~1</div><div class="cmd-desc">Aakhri commit undo karo (changes raho)</div></div><button class="copy-btn" onclick="cp(this,'git reset HEAD~1')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">git stash</div><div class="cmd-desc">Changes temporarily chhupao (baad ke liye)</div></div><button class="copy-btn" onclick="cp(this,'git stash')">copy</button></div>
+    <div class="cmd-card c-red"><div class="cmd-left"><div class="cmd-name">git stash pop</div><div class="cmd-desc">Chhupaye hue changes wapas lao</div></div><button class="copy-btn" onclick="cp(this,'git stash pop')">copy</button></div>
+  </div>
+
+</div>
+
+<!-- GITHUB SECTION -->
+<div class="section" id="sec-github">
+
+  <div class="section-heading">// Remote Connection</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git remote add origin URL</div><div class="cmd-desc">GitHub repo se apna local repo jodo</div></div><button class="copy-btn" onclick="cp(this,'git remote add origin URL')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git remote -v</div><div class="cmd-desc">Connected remote repos dikhao</div></div><button class="copy-btn" onclick="cp(this,'git remote -v')">copy</button></div>
+    <div class="cmd-card c-blue"><div class="cmd-left"><div class="cmd-name">git remote remove origin</div><div class="cmd-desc">Remote connection hata do</div></div><button class="copy-btn" onclick="cp(this,'git remote remove origin')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Push & Pull</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git push origin main</div><div class="cmd-desc">Apna code GitHub pe upload karo</div></div><button class="copy-btn" onclick="cp(this,'git push origin main')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git push -u origin main</div><div class="cmd-desc">Pehli baar push karo aur link set karo</div></div><button class="copy-btn" onclick="cp(this,'git push -u origin main')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git pull origin main</div><div class="cmd-desc">GitHub se latest code apne paas lao</div></div><button class="copy-btn" onclick="cp(this,'git pull origin main')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git fetch</div><div class="cmd-desc">GitHub se updates check karo (merge nahi)</div></div><button class="copy-btn" onclick="cp(this,'git fetch')">copy</button></div>
+    <div class="cmd-card c-green"><div class="cmd-left"><div class="cmd-name">git push origin --delete branch</div><div class="cmd-desc">GitHub se branch delete karo</div></div><button class="copy-btn" onclick="cp(this,'git push origin --delete branch')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// SSH Setup</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">ssh-keygen -t ed25519</div><div class="cmd-desc">Nayi SSH key banao GitHub ke liye</div></div><button class="copy-btn" onclick="cp(this,'ssh-keygen -t ed25519')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">cat ~/.ssh/id_ed25519.pub</div><div class="cmd-desc">Public key dikhao — GitHub mein add karni hai</div></div><button class="copy-btn" onclick="cp(this,'cat ~/.ssh/id_ed25519.pub')">copy</button></div>
+    <div class="cmd-card c-yellow"><div class="cmd-left"><div class="cmd-name">ssh -T git@github.com</div><div class="cmd-desc">GitHub SSH connection test karo</div></div><button class="copy-btn" onclick="cp(this,'ssh -T git@github.com')">copy</button></div>
+  </div>
+
+  <div class="section-heading">// Workflow (Daily Use)</div>
+  <div class="cmd-list">
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git pull → code → git add . → git commit -m "" → git push</div><div class="cmd-desc">Roz ka basic DevOps workflow yahi hai</div></div><button class="copy-btn" onclick="cp(this,'git pull && git add . && git commit -m \"update\" && git push')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git diff</div><div class="cmd-desc">Kya kya changes kiye hain last commit ke baad</div></div><button class="copy-btn" onclick="cp(this,'git diff')">copy</button></div>
+    <div class="cmd-card c-purple"><div class="cmd-left"><div class="cmd-name">git shortlog -s -n</div><div class="cmd-desc">Sab contributors aur unke commits count dikhao</div></div><button class="copy-btn" onclick="cp(this,'git shortlog -s -n')">copy</button></div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelector('.tab.' + tab).classList.add('active');
+  document.getElementById('sec-' + tab).classList.add('active');
+  document.getElementById('searchBox').value = '';
+}
+
+function cp(btn, text) {
+  navigator.clipboard.writeText(text).catch(() => {});
+  btn.textContent = '✓';
+  btn.style.background = 'var(--green)';
+  btn.style.color = 'var(--bg)';
+  setTimeout(() => { btn.textContent = 'copy'; btn.style.background = ''; btn.style.color = ''; }, 1200);
+}
+
+function filterCmds() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  document.querySelectorAll('.cmd-card').forEach(card => {
+    const name = card.querySelector('.cmd-name').textContent.toLowerCase();
+    const desc = card.querySelector('.cmd-desc').textContent.toLowerCase();
+    card.style.display = (name.includes(q) || desc.includes(q)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
